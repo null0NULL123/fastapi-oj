@@ -12,7 +12,6 @@ from fastapi.security import HTTPBasic
 from starlette.middleware.sessions import SessionMiddleware
 import os
 from config import *
-from utils.parse import *
 
 
 app = FastAPI()
@@ -24,6 +23,10 @@ security = HTTPBasic()
 # Create necessary directories
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
+
+
+def check_id(id: str):
+    return len(id) == size and id.startswith(prefix) and id.isnumeric()
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -100,8 +103,8 @@ async def upload_file(
 
     question += (
         os.path.splitext(file.filename)[1]
-        if role == "MCU"
-        else ".py" if role == "Python" else ".c"
+        if role == roles[0]
+        else ".py" if role == roles[1] else ".c"
     )
     save_path = os.path.join(user_dir, question)
 
