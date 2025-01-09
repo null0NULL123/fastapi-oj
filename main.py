@@ -48,7 +48,7 @@ async def login(
         return RedirectResponse(url="/home", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse(
         "login.html",
-        {"request": request, "error": "Invalid id or password"},
+        {"request": request, "error": "用户名或密码错误"},
         status_code=status.HTTP_401_UNAUTHORIZED,
     )
 
