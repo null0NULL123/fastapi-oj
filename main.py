@@ -10,9 +10,9 @@ from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic
 from starlette.middleware.sessions import SessionMiddleware
-
 import os
 from config import *
+from utils.parse import *
 
 
 app = FastAPI()
@@ -22,14 +22,8 @@ templates = Jinja2Templates(directory="templates")
 security = HTTPBasic()
 
 # Create necessary directories
-
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-
-
-
-def check_id(id: str):
-    return len(id) == 10 and id.startswith(prefix) and id.isnumeric()
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -91,7 +85,7 @@ async def download(file: str, request: Request):
     return FileResponse(file_path, filename=file_name)
 
 
-@app.post("/upload")
+@app.post("/upload-file")
 async def upload_file(
     request: Request, file: UploadFile = File(...), question: str = Form(...)
 ):
@@ -124,15 +118,15 @@ async def upload_file(
     return RedirectResponse(url="/home", status_code=status.HTTP_303_SEE_OTHER)
 
 
-@app.post("/submit-code")
-async def submit_code(request: Request, code: str = Form(...)):
+@app.post("/upload-code")
+async def upload_code(request: Request, code: str = Form(...)):
     if not (id := request.session.get("id")) or not (
         role := request.session.get("role")
     ):
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
     # Create user directory if not exists
-    user_dir = os.path.join(UPLOAD_DIR, id)
+    user_dir = os.path.join(UPLOAD_DIR, role, id[3:7], id[7:])
     os.makedirs(user_dir, exist_ok=True)
 
     code_file = os.path.join(user_dir, f"{role}_code.txt")

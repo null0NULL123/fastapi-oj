@@ -43,7 +43,7 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">文件提交</h5>
-                    <form action="/upload" method="post" enctype="multipart/form-data">
+                    <form action="/upload-file" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="question" class="form-label">选择题目：</label>
                             <select class="form-select" id="question" name="question" required>
@@ -72,7 +72,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">代码提交</h5>
-                    <form action="/submit-code" method="post">
+                    <form action="/upload-code" method="post">
                         <div class="mb-3">
                             <label for="code_question" class="form-label">选择题目：</label>
                             <select class="form-select" id="code_question" name="question" required>
