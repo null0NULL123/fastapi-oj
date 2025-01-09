@@ -12,7 +12,8 @@ from fastapi.security import HTTPBasic
 from starlette.middleware.sessions import SessionMiddleware
 import os
 from config import *
-
+from utils.judge import test_code
+from testcase import test_cases
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
@@ -144,6 +145,28 @@ async def upload_code(request: Request, code: str = Form(...)):
         request.session["message_type"] = "danger"
 
     return RedirectResponse(url="/home", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@app.post("/test-code")
+async def test_submitted_code(
+    request: Request,
+    code: str = Form(...),
+    question: str = Form(...),
+    language: str = Form(...),
+):
+    if not request.session.get("id"):
+        return {"status": "error", "message": "未登录"}
+
+    if question not in test_cases:
+        return {"status": "error", "message": "题目不存在"}
+
+    if language not in roles:
+        return {"status": "error", "message": "不支持的语言"}
+
+    test_case = test_cases[question]
+    results = test_code(code, language, test_case["test_cases"])
+
+    return {"status": "success", "results": results, "question_name": test_case["name"]}
 
 
 @app.get("/logout")
