@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>登录</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <h2 class="text-center mb-4">考核登录</h2>
+            <form id="loginForm" method="POST" action="/login">
+                <div class="mb-3">
+                    <label for="role" class="form-label">选择题型</label>
+                    <select class="form-select" id="role" name="role" required>
+                        <option value="Python">Python</option>
+                        <option value="C">C程序</option>
+                        <option value="MCU">单片机</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="id" class="form-label">学号</label>
+                    <input type="text" class="form-control" id="id" name="id" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">密码</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endif %}
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
