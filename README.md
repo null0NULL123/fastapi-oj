@@ -9,9 +9,9 @@ A FastAPI-based online judge system for testing.
 - [x] User authentication
 - [x] Problem listing
 - [x] Code submission
-- [ ] Code execution
 - [ ] Automated judging
 - [ ] Leaderboard
+- [ ] Frontend Style
 
 ## Setup
 
@@ -36,9 +36,23 @@ fastapi-oj/
 ├── config.py                # Configuration
 ├── data.csv                 # Data files
 ├── requirements.txt         # Project dependencies
+├── assets/                  # Source images
+    ├── login.png
+    ├── home.png
 ├── templates/
 │   ├── login.html           # Login page
-│   ├── problem.html         # Problem listing page
+│   ├── home.html            # Home page
 └── utils/
     ├── judge.py             # Code execution and judging
     └── parse.py             # Code parsing utilities and the others
+```
+
+## Display
+
+### Login Page
+
+![login](assets/login.png "Login Page")
+
+### Home Page
+
+![home](assets/home.png "Home Page")
