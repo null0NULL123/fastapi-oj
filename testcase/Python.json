@@ -1,0 +1,21 @@
+{
+    "name": "Python",
+    "questions": {
+        "A":{
+            "name": "Hello World",
+            "description": "Print 'Hello, World!'",
+            "test_cases": [
+                {"input": "", "expected": "Hello, World!"}
+            ],
+            "time_limit": 1.0
+        },
+        "B":{
+            "name": "Hello World",
+            "description": "Print 'Hello, World!'",
+            "test_cases": [
+                {"input": "", "expected": "Hello, World!"}
+            ],
+            "time_limit": 1.0
+        }
+    }
+}
