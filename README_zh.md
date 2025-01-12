@@ -7,9 +7,16 @@
 - [x] 用户认证
 - [x] 题目列表
 - [x] 代码提交
-- [ ] 自动评测
-- [ ] 排行榜
+- [x] 自动评测
 - [ ] 前端样式
+
+### 代码测试
+
+- 支持Python和C语言
+- 实时代码执行和测试
+- 每个问题包含多个测试用例
+- 执行时间限制
+- 详细的测试结果反馈
 
 ## 开始使用
 
@@ -35,11 +42,15 @@ fastapi-oj/
 ├── data.csv                 # 数据文件
 ├── requirements.txt         # 项目依赖
 ├── assets/                  # 源图片
-    ├── login.png
-    ├── home.png
+|   ├── login.png
+|   ├── home.png
 ├── templates/
 │   ├── login.html           # 登录页面
 │   ├── home.html            # 主页面
+├── testcase/                # 测试用例
+│   ├── __init__.py
+│   ├── C.json               # C 语言测试用例
+│   └── Python.json          # Python 语言测试用例
 └── utils/
     ├── judge.py             # 代码执行和评测
     └── parse.py             # 代码解析工具及其他

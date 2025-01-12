@@ -9,9 +9,17 @@ A FastAPI-based online judge system for testing.
 - [x] User authentication
 - [x] Problem listing
 - [x] Code submission
-- [ ] Automated judging
+- [x] Automated judging
 - [ ] Leaderboard
 - [ ] Frontend Style
+
+### Code Testing
+
+- Supports Python and C programming languages
+- Real-time code execution and testing
+- Multiple test cases per problem
+- Time limit enforcement
+- Detailed feedback on test results
 
 ## Setup
 
@@ -37,14 +45,19 @@ fastapi-oj/
 ├── data.csv                 # Data files
 ├── requirements.txt         # Project dependencies
 ├── assets/                  # Source images
-    ├── login.png
-    ├── home.png
-├── templates/
-│   ├── login.html           # Login page
-│   ├── home.html            # Home page
-└── utils/
+|   ├── login.png
+|   ├── home.png
+├── templates/               # HTML templates
+|   ├── login.html           # Login page
+|   ├── home.html            # Home page
+├── testcase/                # Test case files
+|   ├── __init__.py
+|   ├── C.json               # C programming language test cases
+|   └── Python.json          # Python programming language test cases
+└── utils/                   # Utility scripts
     ├── judge.py             # Code execution and judging
     └── parse.py             # Code parsing utilities and the others
+
 ```
 
 ## Display
