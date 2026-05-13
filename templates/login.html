@@ -6,19 +6,20 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
         }
         .login-container {
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto;
-            padding: 30px;
-            background: white;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            padding: 36px;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
             border-radius: 16px;
             animation: fadeIn 0.5s ease-out;
+            backdrop-filter: blur(10px);
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -29,39 +30,39 @@
             margin-bottom: 30px;
         }
         .login-header h2 {
-            color: #2c3e50;
-            font-weight: 600;
+            color: #1a1a2e;
+            font-weight: 700;
             margin-bottom: 10px;
         }
         .form-control, .form-select {
-            border: 2px solid #eee;
+            border: 2px solid #e8e8ef;
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 10px;
             transition: all 0.3s ease;
         }
         .form-control:focus, .form-select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.15);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.2);
         }
         .btn-primary {
             padding: 12px;
             font-weight: 600;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             transition: transform 0.2s ease;
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,123,255,0.2);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.4);
         }
         .alert {
-            border-radius: 8px;
+            border-radius: 10px;
             margin-top: 15px;
         }
         .form-label {
             font-weight: 500;
-            color: #2c3e50;
+            color: #1a1a2e;
         }
         .input-group {
             margin-bottom: 20px;

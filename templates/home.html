@@ -6,7 +6,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
             min-height: 100vh;
             padding: 20px 0;
         }
@@ -14,7 +14,7 @@
             max-width: 900px;
             margin: 0 auto;
             background: white;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
             border-radius: 16px;
             padding: 30px;
             animation: slideIn 0.5s ease-out;
@@ -26,37 +26,40 @@
         .card {
             border: none;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 16px rgba(102,126,234,0.08);
             margin-bottom: 24px;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(102,126,234,0.15);
         }
         .card-title {
-            color: #2c3e50;
-            font-weight: 600;
+            color: #1a1a2e;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .btn {
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 500;
             transition: all 0.3s ease;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
         }
         .btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             border: none;
+            color: #1a1a2e;
+            font-weight: 600;
         }
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.3);
         }
         .header {
             display: flex;
@@ -64,22 +67,26 @@
             align-items: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
+            border-bottom: 2px solid #eef0f5;
+        }
+        .header h2 {
+            color: #1a1a2e;
         }
         .user-info {
             display: flex;
             align-items: center;
             gap: 15px;
+            color: #4a4a6a;
         }
         .form-control, .form-select {
-            border: 2px solid #eee;
+            border: 2px solid #e8e8ef;
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 10px;
             transition: all 0.3s ease;
         }
         .form-control:focus, .form-select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.15);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.15);
         }
         .answer-input {
             min-height: 200px;
@@ -87,7 +94,7 @@
             resize: vertical;
         }
         .alert {
-            border-radius: 8px;
+            border-radius: 10px;
             margin-top: 20px;
         }
     </style>
