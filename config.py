@@ -1,4 +1,9 @@
+import os
+from dotenv import load_dotenv
 import pandas as pd
+
+load_dotenv()
+
 __all__ = [
     "UPLOAD_DIR",
     "DOWNLOAD_DIR",
@@ -7,6 +12,7 @@ __all__ = [
     "roles",
     "prefix",
     "size",
+    "passwd",
 ]
 UPLOAD_DIR = "uploads"
 DOWNLOAD_DIR = "downloads"
@@ -15,3 +21,4 @@ data = pd.read_csv("data.csv")
 ids = set(data["id"].astype(str))
 prefix = "2"
 size = 10
+passwd = os.getenv("PASSWORD", "admin")
