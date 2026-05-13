@@ -32,7 +32,7 @@ def check_id(id: str):
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(request, "login.html")
 
 
 @app.post("/login")
@@ -42,13 +42,14 @@ async def login(
     password: str = Form(...),
     role: str = Form(...),
 ):
-    if password == "admin" and check_id(id) and id in ids:
+    if password == passwd and check_id(id) and id in ids:
         request.session["id"] = id
         request.session["role"] = role
         return RedirectResponse(url="/home", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse(
+        request,
         "login.html",
-        {"request": request, "error": "用户名或密码错误"},
+        {"error": "用户名或密码错误"},
         status_code=status.HTTP_401_UNAUTHORIZED,
     )
 
@@ -64,9 +65,9 @@ async def home(request: Request):
     message_type = request.session.pop("message_type", "info")
 
     return templates.TemplateResponse(
+        request,
         "home.html",
         {
-            "request": request,
             "id": id,
             "role": role,
             "message": message,
@@ -157,13 +158,14 @@ async def test_submitted_code(
     if not request.session.get("id"):
         return {"status": "error", "message": "未登录"}
 
-    if question not in test_cases:
-        return {"status": "error", "message": "题目不存在"}
-
-    if language not in roles:
+    if language not in test_cases:
         return {"status": "error", "message": "不支持的语言"}
 
-    test_case = test_cases[question]
+    lang_cases = test_cases[language]
+    if "questions" not in lang_cases or question not in lang_cases["questions"]:
+        return {"status": "error", "message": "题目不存在"}
+
+    test_case = lang_cases["questions"][question]
     results = test_code(code, language, test_case["test_cases"])
 
     return {"status": "success", "results": results, "question_name": test_case["name"]}
