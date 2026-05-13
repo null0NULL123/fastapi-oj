@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>在线评测系统 — AI Agent 工作流</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --edge: #30363d;
+    --text: #e6edf3;
+    --accent: #58a6ff;
+    --ai: #3fb950;
+    --ai-bg: #0d2818;
+    --human: #f0883e;
+    --system: #8b949e;
+    --title: #f0f6fc;
+    --phase-bg: #1c2128;
+    --red: #f85149;
+    --ai-tag: #3fb950;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    padding: 30px 40px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    color: var(--title);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    color: var(--text);
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 28px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+  }
+  .legend-dot.ai { background: var(--ai); }
+  .legend-dot.human { background: var(--human); }
+  .legend-dot.system { background: var(--system); }
+
+  /* ── Phase container ── */
+  .phase {
+    background: var(--phase-bg);
+    border: 2px solid var(--edge);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .phase-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 20px;
+    background: var(--card);
+    border: 2px solid;
+  }
+  .phase-title.ai       { color: var(--ai);     border-color: var(--ai); }
+  .phase-title.human    { color: var(--human);   border-color: var(--human); }
+  .phase-title.accent   { color: var(--accent);  border-color: var(--accent); }
+  .phase-title.system   { color: var(--system);  border-color: var(--system); }
+
+  /* ── Flow rows ── */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .flow-row:last-child { margin-bottom: 0; }
+
+  /* ── Node box ── */
+  .node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 2px solid var(--edge);
+    background: var(--card);
+    color: var(--system);
+    position: relative;
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .node.bold { font-weight: 700; }
+
+  .node.ai {
+    background: var(--ai-bg);
+    border-color: var(--ai);
+    color: var(--ai);
+    border-width: 2px;
+  }
+  .node.ai::after {
+    content: 'AI';
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    background: var(--ai-tag);
+    color: var(--bg);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    line-height: 1.3;
+  }
+  .node.human {
+    border-color: var(--human);
+    color: var(--human);
+  }
+  .node.accent {
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .node.red {
+    border-color: var(--red);
+    color: var(--red);
+    font-weight: 700;
+  }
+  .node.system {
+    border-color: var(--system);
+    color: var(--system);
+  }
+
+  /* ── Arrow between nodes ── */
+  .arrow {
+    color: var(--edge);
+    font-size: 18px;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .arrow.ai    { color: var(--ai); }
+  .arrow.human { color: var(--human); }
+  .arrow.red   { color: var(--red); }
+
+  /* ── Vertical connector ── */
+  .vsep {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+    color: var(--edge);
+    font-size: 16px;
+  }
+  .vsep.ai { color: var(--ai); }
+
+  /* ── Sub-label row (small text above nodes) ── */
+  .sub-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .sub-node {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--card);
+    border: 1px solid var(--edge);
+    color: var(--system);
+  }
+
+  /* ── Data flow layer ── */
+  .data-flow {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .data-store {
+    font-size: 11px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: var(--card);
+    border: 1px solid var(--edge);
+    color: var(--system);
+    text-align: center;
+    line-height: 1.5;
+    min-width: 100px;
+  }
+  .data-store.ai-store {
+    background: var(--ai-bg);
+    border-color: var(--ai);
+    color: var(--ai);
+  }
+  .data-store.ai-store::after {
+    content: 'AI';
+    background: var(--ai-tag);
+    color: var(--bg);
+    font-size: 8px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-left: 4px;
+  }
+
+  /* ── Capability panel ── */
+  .capabilities {
+    background: var(--phase-bg);
+    border: 2px solid var(--ai);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .capabilities h3 {
+    color: var(--ai);
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+  .cap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+  }
+  .cap-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .cap-item .dot {
+    color: var(--ai);
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .cap-item .title {
+    color: var(--ai);
+    font-weight: 700;
+    min-width: 64px;
+  }
+  .cap-item .desc {
+    color: var(--text);
+    opacity: 0.85;
+  }
+
+  /* ── Grid layout for phase 3 ── */
+  .phase3-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .phase3-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .phase3-col .node { width: 100%; }
+
+  /* ── Horizontal flow with arrow ── */
+  .hflow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Branch split ── */
+  .branch {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .branch-left, .branch-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    body { padding: 16px; }
+    .phase3-grid { grid-template-columns: 1fr 1fr; }
+    .cap-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>在线评测系统 — AI Agent 工作流</h1>
+  <p class="subtitle">绿色节点 = AI 可参与环节 &nbsp;|&nbsp; 橙色节点 = 人工环节 &nbsp;|&nbsp; 灰色节点 = 系统自动</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot ai"></div>AI Agent</div>
+  <div class="legend-item"><div class="legend-dot human"></div>人工</div>
+  <div class="legend-item"><div class="legend-dot system"></div>系统</div>
+</div>
+
+<!-- ═══════════ 阶段 1：考前准备 ═══════════ -->
+<div class="phase" style="border-color: var(--ai);">
+  <div class="phase-title ai">阶段 1：考前准备</div>
+  <div class="flow-row">
+    <div class="node ai bold">AI 自动生成题目</div>
+    <div class="arrow ai">&rarr;</div>
+    <div class="node ai bold">AI 生成测试用例</div>
+  </div>
+  <div class="vsep ai">&darr;</div>
+  <div class="sub-row">
+    <div class="sub-node">写入 testcase/</div>
+  </div>
+</div>
+
+<!-- ═══════════ 阶段 2：考生登录 ═══════════ -->
+<div class="phase" style="border-color: var(--human);">
+  <div class="phase-title human">阶段 2：考生登录</div>
+  <div class="flow-row">
+    <div class="node human">访问登录页</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node human">输入学号/密码/题型</div>
+  </div>
+  <div class="vsep">&darr;</div>
+  <div class="flow-row">
+    <div class="sub-node">POST /login 验证</div>
+    <div class="arrow">&rarr;</div>
+    <div class="sub-node">Session</div>
+  </div>
+</div>
+
+<!-- ═══════════ 阶段 3：做题与评测（核心流程）═══════════ -->
+<div class="phase" style="border-color: var(--accent);">
+  <div class="phase-title accent">阶段 3：做题与评测（核心流程）</div>
+
+  <!-- Row 1: 阅读题目 → 编写代码 → 选择提交方式 -->
+  <div class="flow-row">
+    <div class="node human">下载题目文件</div>
+    <div class="arrow">&darr;</div>
+    <div class="node human">阅读题目要求</div>
+    <div class="arrow ai">&darr;</div>
+    <div class="node ai bold">AI 解析题意</div>
+  </div>
+
+  <div class="vsep ai">&darr;</div>
+
+  <div class="flow-row">
+    <div class="node human bold">编写代码</div>
+    <div class="arrow ai">&darr;</div>
+    <div class="node ai bold">AI 辅助编码</div>
+    <div class="arrow ai">&darr;</div>
+    <div class="node ai bold">AI 代码审查</div>
+  </div>
+
+  <div class="vsep">&darr;</div>
+
+  <div class="flow-row">
+    <div class="node accent bold">选择提交方式</div>
+  </div>
+
+  <div class="vsep">&darr;</div>
+
+  <!-- Branch: file upload vs online -->
+  <div class="branch">
+    <div class="branch-left">
+      <div class="hflow">
+        <div class="node human">文件上传</div>
+        <div class="arrow">&rarr;</div>
+        <div class="sub-node">保存到 uploads/</div>
+      </div>
+    </div>
+    <div class="branch-right">
+      <div class="node human">在线输入代码</div>
+    </div>
+  </div>
+
+  <div class="vsep">&darr;</div>
+
+  <!-- Judge pipeline -->
+  <div class="flow-row">
+    <div class="sub-node" style="font-weight:700;">评测引擎</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node ai bold">AI 智能评判</div>
+    <div class="arrow ai">&darr;</div>
+    <div class="node ai bold">AI 代码相似度检测</div>
+  </div>
+
+  <div class="vsep">&darr;</div>
+
+  <!-- Results -->
+  <div class="flow-row">
+    <div class="node accent bold">评测结果</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node ai bold" style="min-width:50px;">AC</div>
+    <div class="arrow ai">&nbsp;</div>
+    <div class="node red bold" style="min-width:70px;">WA/TLE</div>
+  </div>
+
+  <div class="vsep">&darr;</div>
+
+  <!-- Feedback loop -->
+  <div class="flow-row">
+    <div class="node ai bold">AI 解题提示</div>
+    <div class="arrow ai">&rarr;</div>
+    <div class="node human">修改代码</div>
+    <div class="arrow human" style="opacity:0.5;">&hookleftarrow; 重新提交</div>
+  </div>
+</div>
+
+<!-- ═══════════ 阶段 4：考后分析与反馈 ═══════════ -->
+<div class="phase" style="border-color: var(--ai);">
+  <div class="phase-title ai">阶段 4：考后分析与反馈</div>
+  <div class="sub-row">
+    <div class="sub-node">uploads/</div>
+    <div class="sub-node">评测结果</div>
+    <div class="sub-node">统计数据</div>
+    <div class="sub-node">考生反馈</div>
+  </div>
+  <div class="vsep ai">&darr;</div>
+  <div class="flow-row">
+    <div class="node ai bold">AI 成绩分析报告</div>
+    <div class="node ai bold">AI 个性化评语</div>
+    <div class="node ai bold">AI 薄弱环节诊断</div>
+    <div class="node ai bold">AI 题目质量优化</div>
+  </div>
+</div>
+
+<!-- ═══════════ 阶段 5：系统运维 ═══════════ -->
+<div class="phase" style="border-color: var(--ai);">
+  <div class="phase-title ai">阶段 5：系统运维</div>
+  <div class="sub-row">
+    <div class="sub-node">Bug 修复</div>
+  </div>
+  <div class="vsep">&darr;</div>
+  <div class="flow-row">
+    <div class="node ai bold">AI 代码开发</div>
+    <div class="arrow ai">&rarr;</div>
+    <div class="node ai bold">AI 自动化测试</div>
+  </div>
+</div>
+
+<!-- ═══════════ AI Agent 核心能力 ═══════════ -->
+<div class="capabilities">
+  <h3>AI Agent 核心能力</h3>
+  <div class="cap-grid">
+    <div class="cap-item"><span class="dot">&#9679;</span><span class="title">代码生成</span><span class="desc">根据题意自动生成解题代码</span></div>
+    <div class="cap-item"><span class="dot">&#9679;</span><span class="title">智能评判</span><span class="desc">语义级评测，模糊匹配，部分分</span></div>
+    <div class="cap-item"><span class="dot">&#9679;</span><span class="title">代码分析</span><span class="desc">质量评估、复杂度分析、Bug 检测</span></div>
+    <div class="cap-item"><span class="dot">&#9679;</span><span class="title">作弊检测</span><span class="desc">代码相似度对比，跨考生分析</span></div>
+    <div class="cap-item"><span class="dot">&#9679;</span><span class="title">个性反馈</span><span class="desc">针对每位考生的改进建议</span></div>
+    <div class="cap-item"><span class="dot">&#9679;</span><span class="title">数据洞察</span><span class="desc">成绩统计、薄弱环节诊断</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ 数据流层 ═══════════ -->
+<div class="phase" style="border-color: var(--system);">
+  <div class="phase-title system">数据流层</div>
+  <div class="data-flow">
+    <div class="data-store">data.csv<br>考生数据</div>
+    <div class="data-store">testcase/<br>测试用例</div>
+    <div class="data-store">uploads/<br>提交记录</div>
+    <div class="data-store">downloads/<br>题目文件</div>
+    <div class="data-store">Session<br>会话状态</div>
+    <div class="data-store ai-store">AI Model<br>模型推理</div>
+  </div>
+</div>
+
+</body>
+</html>
